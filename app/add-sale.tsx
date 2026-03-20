@@ -261,8 +261,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF", borderRadius: 16,
     paddingHorizontal: 14, paddingVertical: 16,
     borderWidth: 1.5, borderColor: "#E5E7EB",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 1,
   },
   typeSelectorActive: { borderColor: "#111827" },
   typeSelectorText: { flex: 1, fontSize: 15, color: "#9CA3AF" },
@@ -275,10 +273,9 @@ const styles = StyleSheet.create({
   // Note input
   inputWrapper: {
     flexDirection: "row", alignItems: "center",
-    backgroundColor: "#FFFFFF", borderRadius: 16,
+    backgroundColor: "#ffffffff", borderRadius: 16,
     paddingHorizontal: 14, paddingVertical: 4,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 1,
+    borderWidth: 1.5, borderColor: "#E5E7EB",
   },
   textInput: { flex: 1, fontSize: 15, color: "#111827", paddingVertical: 14 },
   noteInput: { minHeight: 52, textAlignVertical: "top" },

@@ -194,8 +194,7 @@ const styles = StyleSheet.create({
   // Add card
   addCard: {
     backgroundColor: "#FFFFFF", borderRadius: 20, padding: 16, marginBottom: 24,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04, shadowRadius: 8, elevation: 2, gap: 4,
+    gap: 4,
   },
   addField: { flexDirection: "row", alignItems: "center", paddingVertical: 4 },
   addDivider: { height: 1, backgroundColor: "#F3F4F6", marginVertical: 6 },
@@ -232,8 +231,6 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", backgroundColor: "#FFFFFF",
     borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14,
     marginBottom: 10, gap: 12,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03, shadowRadius: 4, elevation: 1,
   },
   typeIconWrap: {
     width: 36, height: 36, borderRadius: 10,

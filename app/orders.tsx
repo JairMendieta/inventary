@@ -163,12 +163,12 @@ export default function OrdersScreen() {
         <View style={[styles.summaryCard, styles.summaryCardGreen]}>
           <Text style={styles.summaryLabel}>Cobrado</Text>
           <Text style={[styles.summaryAmount, styles.summaryGreen]}>${totalCollected.toFixed(2)}</Text>
-          <Text style={styles.summaryCount}>{filtered.filter((o) => o.paid).length} pagado{filtered.filter(o=>o.paid).length!==1?"s":""}</Text>
+          <Text style={styles.summaryCount}>{filtered.filter((o) => o.paid).length} pagado{filtered.filter(o => o.paid).length !== 1 ? "s" : ""}</Text>
         </View>
         <View style={[styles.summaryCard, styles.summaryCardOrange]}>
           <Text style={styles.summaryLabel}>Pendiente</Text>
           <Text style={[styles.summaryAmount, styles.summaryOrange]}>${totalPending.toFixed(2)}</Text>
-          <Text style={styles.summaryCount}>{filtered.filter((o) => !o.paid).length} pendiente{filtered.filter(o=>!o.paid).length!==1?"s":""}</Text>
+          <Text style={styles.summaryCount}>{filtered.filter((o) => !o.paid).length} pendiente{filtered.filter(o => !o.paid).length !== 1 ? "s" : ""}</Text>
         </View>
       </View>
 
@@ -411,8 +411,6 @@ const styles = StyleSheet.create({
   summaryCard: {
     flex: 1, backgroundColor: "#FFFFFF", borderRadius: 18,
     padding: 14, alignItems: "center",
-    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04, shadowRadius: 4, elevation: 1,
   },
   summaryCardGreen: { backgroundColor: "#ECFDF5" },
   summaryCardOrange: { backgroundColor: "#FFF7ED" },
@@ -438,8 +436,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF", borderRadius: 18,
     paddingHorizontal: 14, paddingVertical: 14,
     marginBottom: 10, gap: 12,
-    shadowColor: "#000", shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03, shadowRadius: 4, elevation: 1,
   },
   orderRowPaid: { opacity: 0.65 },
   checkbox: { padding: 4 },

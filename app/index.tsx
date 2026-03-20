@@ -129,7 +129,13 @@ export default function App() {
         <View style={styles.header}>
           {/* Top row: title + settings button */}
           <View style={styles.headerTopRow}>
-            <View style={{ width: 40 }} />
+            <TouchableOpacity
+              style={styles.settingsBtn}
+              onPress={() => router.push("/settings")}
+              activeOpacity={0.7}
+            >
+              <Feather name="settings" size={18} color="#6B7280" />
+            </TouchableOpacity>
             <Text style={styles.headerSubtitle}>Balance Neto</Text>
             <TouchableOpacity
               style={styles.settingsBtn}
@@ -326,11 +332,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 16,
     justifyContent: "space-between",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
   },
   saleButton: {
     backgroundColor: "#111827",
@@ -391,11 +392,6 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 20,
     marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 5,
-    elevation: 1,
     gap: 12,
   },
   iconContainer: {
