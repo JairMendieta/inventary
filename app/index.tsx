@@ -1,34 +1,26 @@
 import { Feather } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import {
   Alert,
   FlatList,
-  KeyboardAvoidingView,
   Platform,
   StatusBar,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { useSales } from "../hooks/useSales";
 
 export default function App() {
   const insets = useSafeAreaInsets();
-  const [inputValue, setInputValue] = useState("");
-  const { sales, totalSales, addSale, removeSale } = useSales();
-
-  const handleSaveSale = () => {
-    const success = addSale(inputValue);
-    if (success) {
-      setInputValue("");
-    }
-  };
+  const router = useRouter();
+  const { sales, totalSales, removeSale } = useSales();
 
   const handleDeleteSale = (id: string) => {
-    Alert.alert("Eliminar venta", "¿Estás seguro de eliminar esta venta?", [
+    Alert.alert("Eliminar registro", "¿Estás seguro de eliminar este registro?", [
       { text: "Cancelar", style: "cancel" },
       { text: "Eliminar", style: "destructive", onPress: () => removeSale(id) },
     ]);
@@ -41,7 +33,9 @@ export default function App() {
   }) => (
     <View style={styles.saleRow}>
       <View style={styles.saleInfo}>
-        <Feather name="check-circle" size={20} color="#10B981" />
+        <View style={styles.iconContainer}>
+          <Feather name="arrow-up-right" size={20} color="#10B981" />
+        </View>
         <Text style={styles.saleDate}>{item.date}</Text>
       </View>
       <View style={styles.saleRight}>
@@ -51,7 +45,7 @@ export default function App() {
           style={styles.deleteButton}
           activeOpacity={0.7}
         >
-          <Feather name="trash-2" size={16} color="#EF4444" />
+          <Feather name="trash-2" size={18} color="#EF4444" />
         </TouchableOpacity>
       </View>
     </View>
@@ -61,15 +55,15 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F9FAFB" />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      <View
         style={[
-          styles.keyboardView,
+          styles.mainContent,
           { paddingTop: insets.top, paddingBottom: insets.bottom },
         ]}
       >
+        {/* Encabezado / Balance */}
         <View style={styles.header}>
-          <Text style={styles.headerSubtitle}>Ventas de hoy</Text>
+          <Text style={styles.headerSubtitle}>Balance de Ventas</Text>
           <Text style={styles.headerTitle}>
             $
             {totalSales.toLocaleString("en-US", {
@@ -79,40 +73,40 @@ export default function App() {
           </Text>
         </View>
 
-        <View style={styles.inputCard}>
-          <View style={styles.inputWrapper}>
-            <Text style={styles.currencySymbol}>$</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0.00"
-              placeholderTextColor="#9CA3AF"
-              keyboardType="decimal-pad"
-              value={inputValue}
-              onChangeText={setInputValue}
-              maxLength={8}
-            />
-          </View>
+        {/* Botones de Acción Rápida */}
+        <View style={styles.actionContainer}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.saleButton]}
+            activeOpacity={0.8}
+            onPress={() => router.push("/add-sale")}
+          >
+            <Feather name="plus-circle" size={24} color="#FFFFFF" />
+            <Text style={styles.actionButtonText}>Agregar Venta</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.button, !inputValue && styles.buttonDisabled]}
+            style={[styles.actionButton, styles.expenseButton]}
             activeOpacity={0.8}
-            onPress={handleSaveSale}
-            disabled={!inputValue}
+            onPress={() => router.push("/add-expense")}
           >
-            <Text style={styles.buttonText}>Guardar venta</Text>
-            <Feather name="arrow-right" size={20} color="#FFFFFF" />
+            <Feather name="minus-circle" size={24} color="#FFFFFF" />
+            <Text style={styles.actionButtonText}>Agregar Gasto</Text>
           </TouchableOpacity>
         </View>
 
+        {/* Lista de Historial */}
         <View style={styles.listContainer}>
           <Text style={styles.listTitle}>
             Historial reciente{" "}
             <Text style={styles.listCount}>({sales.length})</Text>
           </Text>
+          
           {sales.length === 0 ? (
             <View style={styles.emptyState}>
-              <Feather name="inbox" size={40} color="#D1D5DB" />
-              <Text style={styles.emptyText}>No hay ventas registradas</Text>
+              <View style={styles.emptyIconBackground}>
+                <Feather name="inbox" size={32} color="#9CA3AF" />
+              </View>
+              <Text style={styles.emptyText}>No hay movimientos registrados</Text>
             </View>
           ) : (
             <FlatList
@@ -124,7 +118,7 @@ export default function App() {
             />
           )}
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </View>
   );
 }
@@ -134,22 +128,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F9FAFB",
   },
-  keyboardView: {
+  mainContent: {
     flex: 1,
     paddingHorizontal: 24,
   },
 
+  // Header Styles
   header: {
     marginTop: 40,
     marginBottom: 32,
     alignItems: "center",
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#6B7280",
-    fontWeight: "500",
+    fontWeight: "600",
     textTransform: "uppercase",
-    letterSpacing: 1,
+    letterSpacing: 1.2,
     marginBottom: 8,
   },
   headerTitle: {
@@ -159,67 +154,50 @@ const styles = StyleSheet.create({
     letterSpacing: -1,
   },
 
-  inputCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
-    padding: 24,
+  // Action Buttons Styles
+  actionContainer: {
+    flexDirection: "row",
+    gap: 12,
     marginBottom: 32,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
   },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#F3F4F6",
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    marginBottom: 16,
-    height: 70,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
-  },
-  currencySymbol: {
-    fontSize: 28,
-    color: "#374151",
-    fontWeight: "600",
-    marginRight: 8,
-  },
-  input: {
+  actionButton: {
     flex: 1,
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#111827",
+    height: 100,
+    borderRadius: 20,
+    padding: 16,
+    justifyContent: "space-between",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  button: {
-    backgroundColor: "#111827",
-    borderRadius: 16,
-    height: 60,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
+  saleButton: {
+    backgroundColor: "#111827", // Oscuro elegante
   },
-  buttonDisabled: {
-    backgroundColor: "#9CA3AF",
+  expenseButton: {
+    backgroundColor: "#EF4444", // Rojo para gastos
   },
-  buttonText: {
+  actionButtonText: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
+    marginTop: 8,
   },
 
+  // List Styles
   listContainer: {
     flex: 1,
   },
   listTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "700",
-    color: "#374151",
+    color: "#111827",
     marginBottom: 16,
   },
   listCount: {
-    fontSize: 14,
-    fontWeight: "400",
+    fontSize: 16,
+    fontWeight: "500",
     color: "#9CA3AF",
   },
   flatListContent: {
@@ -231,25 +209,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     padding: 16,
-    borderRadius: 16,
+    borderRadius: 20,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 5,
+    elevation: 1,
   },
   saleInfo: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
   },
+  iconContainer: {
+    backgroundColor: "#ECFDF5", // Verde claro de fondo
+    padding: 8,
+    borderRadius: 12,
+  },
   saleRight: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: 16,
   },
   saleDate: {
     fontSize: 16,
     color: "#4B5563",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   saleAmount: {
     fontSize: 18,
@@ -259,16 +245,23 @@ const styles = StyleSheet.create({
   deleteButton: {
     padding: 4,
   },
+
+  // Empty State Styles
   emptyState: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingTop: 60,
-    gap: 12,
+    paddingTop: 40,
+    gap: 16,
+  },
+  emptyIconBackground: {
+    backgroundColor: "#F3F4F6",
+    padding: 20,
+    borderRadius: 100,
   },
   emptyText: {
-    fontSize: 15,
-    color: "#9CA3AF",
-    fontWeight: "400",
+    fontSize: 16,
+    color: "#6B7280",
+    fontWeight: "500",
   },
 });
