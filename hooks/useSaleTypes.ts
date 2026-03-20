@@ -13,9 +13,9 @@ export function useSaleTypes() {
     refreshSaleTypes();
   }, [refreshSaleTypes]);
 
-  const addSaleType = useCallback((name: string): boolean => {
-    if (!name.trim()) return false;
-    const newType = insertSaleType(name);
+  const addSaleType = useCallback((name: string, price: number, is_order: boolean): boolean => {
+    if (!name.trim() || isNaN(price) || price < 0) return false;
+    const newType = insertSaleType(name, price, is_order);
     setSaleTypes((prev) => [...prev, newType]);
     return true;
   }, []);

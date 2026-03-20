@@ -25,6 +25,8 @@ export default function AddSaleScreen() {
   const router = useRouter();
   const { addSale } = useSales();
   const { saleTypes, refreshSaleTypes } = useSaleTypes();
+  // Only show non-encargo types for daily sales
+  const saleOnlyTypes = saleTypes.filter((t) => !t.is_order);
 
   const [amount, setAmount] = useState("");
   const [selectedType, setSelectedType] = useState<SaleType | null>(null);
@@ -108,7 +110,7 @@ export default function AddSaleScreen() {
             <Feather name="chevron-down" size={18} color="#9CA3AF" />
           </TouchableOpacity>
 
-          {saleTypes.length === 0 && (
+          {saleOnlyTypes.length === 0 && (
             <TouchableOpacity
               onPress={() => router.push("/sale-types")}
               style={styles.createTypeHint}
@@ -173,7 +175,7 @@ export default function AddSaleScreen() {
               </TouchableOpacity>
             </View>
 
-            {saleTypes.length === 0 ? (
+            {saleOnlyTypes.length === 0 ? (
               <View style={styles.modalEmpty}>
                 <Feather name="tag" size={28} color="#D1D5DB" />
                 <Text style={styles.modalEmptyText}>
@@ -182,7 +184,7 @@ export default function AddSaleScreen() {
               </View>
             ) : (
               <FlatList
-                data={saleTypes}
+                data={saleOnlyTypes}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                   <TouchableOpacity

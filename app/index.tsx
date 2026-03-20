@@ -198,6 +198,19 @@ export default function App() {
           </TouchableOpacity>
         </View>
 
+        {/* ── Encargos Shortcut ── */}
+        <TouchableOpacity
+          style={styles.ordersButton}
+          activeOpacity={0.8}
+          onPress={() => router.push("/orders")}
+        >
+          <View style={styles.ordersButtonLeft}>
+            <Feather name="clipboard" size={20} color="#6366F1" />
+            <Text style={styles.ordersButtonText}>Ver Encargos</Text>
+          </View>
+          <Feather name="chevron-right" size={18} color="#6366F1" />
+        </TouchableOpacity>
+
         {/* ── Unified List ── */}
         <View style={styles.listContainer}>
           <Text style={styles.listTitle}>
@@ -329,6 +342,26 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+  ordersButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#EEF2FF",
+    borderRadius: 18,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    marginBottom: 24,
+  },
+  ordersButtonLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  ordersButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#6366F1",
   },
 
   // List
