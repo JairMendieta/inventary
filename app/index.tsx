@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -12,34 +13,25 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSales } from "../hooks/useSales";
 
 export default function App() {
   const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState("");
-
-  const [sales, setSales] = useState([
-    { id: "1", date: "20/03/2026", amount: 50.0 },
-    { id: "2", date: "19/03/2026", amount: 120.5 },
-    { id: "3", date: "18/03/2026", amount: 85.0 },
-  ]);
-
-  const totalSales = sales.reduce((sum, item) => sum + item.amount, 120.0);
+  const { sales, totalSales, addSale, removeSale } = useSales();
 
   const handleSaveSale = () => {
-    if (!inputValue || isNaN(Number(inputValue))) return;
+    const success = addSale(inputValue);
+    if (success) {
+      setInputValue("");
+    }
+  };
 
-    const newSale = {
-      id: Date.now().toString(),
-      date: new Date().toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      }),
-      amount: parseFloat(inputValue),
-    };
-
-    setSales([newSale, ...sales]);
-    setInputValue("");
+  const handleDeleteSale = (id: string) => {
+    Alert.alert("Eliminar venta", "¿Estás seguro de eliminar esta venta?", [
+      { text: "Cancelar", style: "cancel" },
+      { text: "Eliminar", style: "destructive", onPress: () => removeSale(id) },
+    ]);
   };
 
   const renderSaleItem = ({
@@ -52,7 +44,16 @@ export default function App() {
         <Feather name="check-circle" size={20} color="#10B981" />
         <Text style={styles.saleDate}>{item.date}</Text>
       </View>
-      <Text style={styles.saleAmount}>${item.amount.toFixed(2)}</Text>
+      <View style={styles.saleRight}>
+        <Text style={styles.saleAmount}>${item.amount.toFixed(2)}</Text>
+        <TouchableOpacity
+          onPress={() => handleDeleteSale(item.id)}
+          style={styles.deleteButton}
+          activeOpacity={0.7}
+        >
+          <Feather name="trash-2" size={16} color="#EF4444" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -104,14 +105,24 @@ export default function App() {
         </View>
 
         <View style={styles.listContainer}>
-          <Text style={styles.listTitle}>Historial reciente</Text>
-          <FlatList
-            data={sales}
-            keyExtractor={(item) => item.id}
-            renderItem={renderSaleItem}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.flatListContent}
-          />
+          <Text style={styles.listTitle}>
+            Historial reciente{" "}
+            <Text style={styles.listCount}>({sales.length})</Text>
+          </Text>
+          {sales.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Feather name="inbox" size={40} color="#D1D5DB" />
+              <Text style={styles.emptyText}>No hay ventas registradas</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={sales}
+              keyExtractor={(item) => item.id}
+              renderItem={renderSaleItem}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.flatListContent}
+            />
+          )}
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -152,12 +163,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     borderRadius: 24,
     padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.04,
-    shadowRadius: 20,
-    elevation: 4,
     marginBottom: 32,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   inputWrapper: {
     flexDirection: "row",
@@ -167,6 +175,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 16,
     height: 70,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   currencySymbol: {
     fontSize: 28,
@@ -207,6 +217,11 @@ const styles = StyleSheet.create({
     color: "#374151",
     marginBottom: 16,
   },
+  listCount: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#9CA3AF",
+  },
   flatListContent: {
     paddingBottom: 20,
   },
@@ -218,13 +233,15 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 8,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   saleInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  saleRight: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
@@ -238,5 +255,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#111827",
     fontWeight: "700",
+  },
+  deleteButton: {
+    padding: 4,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 60,
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: "#9CA3AF",
+    fontWeight: "400",
   },
 });
